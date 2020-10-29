@@ -11,8 +11,8 @@ dat1 = pd.read_csv("data/cars.csv")
 # dat1.fillna(None, inplace = True)
 dat1 = dat1.where(pd.notnull(dat1), None)
 columns_titles = ['title', 'year', 'miles', 'price', 'link', 'location']
-dat1 = dat1.reindex(columns=columns_titles)
-dat = dat1
+dat = dat1.reindex(columns=columns_titles)
+
 
 # %%
 def main():
@@ -65,13 +65,26 @@ def main():
     print(dat_epic_before)
     print()
     print(dat_epic_after)
-    
-
 
     mydb.close()
+    dat_deals = dat_epic_after.merge(dat_epic_before, on='id', how='left')
+    print(dat_deals)
     ### testing
-    # statement_insert = '''"INSERT INTO `cars` (`title`,`price`,`link`,`location`,`miles`) VALUES ('2002 Ford F-150 Short Bed 4D',2500,'https://www.facebook.com/marketplace/item/1291798527839337/','Pueblo, CO',200000.0)" % (,2500,,,,2002.0)'''
+    recipients = ["+17193385009"]
 
+    new_epic_data_found = True
+    if new_epic_data_found:
+        titles = list(dat['title'])
+        miles  = list(dat['miles'])
+        prices  = list(dat['price'])
+        links  = list(dat['link'])
+        body   = "\n\n" + str(len(dat.index)) + " New epic deal(s) ------pogs------\n"
+        for title, mile, price, link in zip(titles, miles, prices, links):
+            # body += "\n\n\nTitle:   " + title + "Link: " + link + "\n\n\n"
+            body += "\nTitle:   " + title + "Price: $" + str(price) + "   Link:   " + link + "\n\n"
+        for recipient in recipients:
+            send_sms.main(recipient, body)
+        print(body)
 
 #%%
 

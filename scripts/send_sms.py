@@ -1,5 +1,3 @@
-
-
 from twilio.rest import Client 
  
 # phone_numbers = {
@@ -25,6 +23,7 @@ def main(recipient, body):
 def send_sms_epic_to(recipient, body):
 
     account_sid = 'ACb8fa2683a0e0572bde6d0816efac96cc' 
+    
     auth_token = '6190475282b6fb3585db2babca1eb2ea' 
     client = Client(account_sid, auth_token) 
     message = client.messages.create(body = body,

@@ -46,21 +46,7 @@ connect_to_mysql.main()
 # %%
 # dat = dat_queried
 # recipients = ["+17193385009", "+17192002926"]
-recipients = ["+17193385009"]
 
-new_epic_data_found = True
-if new_epic_data_found:
-    titles = list(dat['title'])
-    miles  = list(dat['miles'])
-    prices  = list(dat['price'])
-    links  = list(dat['link'])
-    body   = "\n\n" + str(len(dat.index)) + " New epic deal(s) ------pogs------\n"
-    for title, mile, price, link in zip(titles, miles, prices, links):
-        # body += "\n\n\nTitle:   " + title + "Link: " + link + "\n\n\n"
-        body += "\nTitle:   " + title + "Price: $" + str(price) + "   Link:   " + link + "\n\n"
-    for recipient in recipients:
-        send_sms.main(recipient, body)
-    print(body)
 
 
     # send_sms.send_sms_epic_to()
