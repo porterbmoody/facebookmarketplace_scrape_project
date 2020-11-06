@@ -15,14 +15,12 @@ dat1 = dat1.where(pd.notnull(dat1), None)
 columns_titles = ['title', 'year', 'miles', 'price', 'link', 'location']
 dat = dat1.reindex(columns=columns_titles)
 
-
 # %%
 def main():
     mydb = mysql.connector.connect(**config, auth_plugin='mysql_native_password')
     mycursor2 = mydb.cursor()
     mycursor1 = mydb.cursor()
     mycursor = mydb.cursor()
-
 
     cols = "`,`".join([str(i) for i in dat.columns.tolist()])
     print(cols)
@@ -64,7 +62,7 @@ def main():
         data.append(row)
     mydb.close()
     dat_epic_after = pd.DataFrame(data, columns = ['id','title','year','miles','price','link','location'])
-    
+
     print("Length before: ", len(dat_epic_before), "Length after: ", len(dat_epic_after))
     if len(dat_epic_after) > len(dat_epic_before):
         print(dat_epic_before)

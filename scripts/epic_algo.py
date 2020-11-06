@@ -8,8 +8,6 @@ import numpy as np
 import connect_to_mysql
 import sys
 import send_sms
-# from sqlalchemy import create_engine
-# import pymysql
 import time
 import random
 # %%

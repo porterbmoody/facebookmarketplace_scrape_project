@@ -62,6 +62,12 @@ def fb_login():
     scroll_down()
     time.sleep(random.randint(150,300)/100)
 
+
+    # CSE 250
+    # math 488
+    # religion 250
+    # cit 225
+
     driver.minimize_window()
     
     return BeautifulSoup(driver.page_source, 'html.parser')
@@ -69,8 +75,7 @@ def fb_login():
 
     print(break_)
 
-def alt_element(a):
-    return a[::2]
+
 
 def scrape_soup(soup):
 
@@ -101,15 +106,14 @@ def scrape_soup(soup):
             for m in row:
 
                 if  line_number % 4 == 0:
-                    # price = re.replace('$', '', m.find(class_ = "hlyrhctz").text)
-                    # prices.append(int(re.replace(',', '', price)))
+
                     
                     prices.append(m.find(class_ = "hlyrhctz").text)
                     
                 elif line_number % 4 == 1:
                     # print(re.findall('^\d{4}', m.text))
                     titles.append(m.text)
-                    # print(m.text)
+
                     try:
                         years.append(int(re.findall('^\d{4}', m.text)[0]))
                     except:
@@ -171,53 +175,9 @@ def scroll_down():
 
 def main():
     
-    # scrape_soup(fb_login())
-    # with open("facebook.html", mode = "rb") as infile:
-    #     soup = BeautifulSoup(infile, 'html.parser')
-    #     scrape_soup(soup)
-
     scrape_soup(fb_login())
     # keep_open()
     driver.close()
 
 if __name__ == "__main__":
     main()
-
-
-    # print(break_)
-    # print("Miles:", len(miles), "Prices:", len(prices))
-    # print(break_)
-    # for mile in results_mile:
-    #     if bool(re.search('miles', mile.text)) == True:
-    #         miles.append(mile.text)
-    #         # print("Appending:", mile.text)
-    #     elif mile.text == '':
-    #         miles.append("None")
-    #         print("Skipping:", mile.text)
-    # ##### Prices
-    # for price, mile in zip(results_price, miles):
-
-    #     if mile == "None":
-    #         miles.remove(mile)
-    #         print(break_)
-    #         print("Removing ",mile,"from miles,", price.text)
-    #         print(break_)
-    #         continue
-    #     else:
-    #         print(break_)
-    #         print("Appending:",price.text, "Mile:",mile)
-    #         prices.append(price.text)
-            
-
-    # for title in results_title:
-
-    #     titles.append(title.text)
-    #     years.append(int(re.findall('\d{4}', title.text)[0]))
-
-
-    # while len(miles) > len(years):
-    #     print("Miles", len(miles),"<", len(years), "Titles: ", len(titles), "Prices: ", len(prices), " Deleting: ", miles[-1])
-    #     del miles[-1]
-        # del years[-1]
-        # del titles[-1]
-        # del prices[-1]
