@@ -15,7 +15,6 @@ from twilio.rest import Client
 # phone_numbers = ["+15038930864", "+17193385009", "+15035803396", "+19712005681", "+18016693768", "+13852303728"]
 # __to__ = ["+17193385009", "+17192002026"]
 
-print("------------------------")
 # my_text = "https://www.facebook.com/marketplace/item/797520111059937"
 print("------------------------")
 def main(recipient, body):
@@ -23,8 +22,7 @@ def main(recipient, body):
 def send_sms_epic_to(recipient, body):
 
     account_sid = 'ACb8fa2683a0e0572bde6d0816efac96cc' 
-    
-    auth_token = '6190475282b6fb3585db2babca1eb2ea' 
+    auth_token = ''
     client = Client(account_sid, auth_token) 
     message = client.messages.create(body = body,
                                     from_ = '+16508307908',        
@@ -32,5 +30,13 @@ def send_sms_epic_to(recipient, body):
                                 )
 
 if __name__ == "__main__":
-    main(recipient, body)
+    main(recipient="+17193385009", body="bruh")
 
+
+# account_sid = 'ACb8fa2683a0e0572bde6d0816efac96cc' 
+# auth_token = 'f7a56601e918a57955b4e53905481fc5' 
+# client = Client(account_sid, auth_token) 
+# message = client.messages.create(body = "bruh",
+#                                 from_ = '+16508307908',        
+#                                 to = "+17193385009"
+#                             )

@@ -1,13 +1,15 @@
 # %%
 import mysql.connector
 import pandas as pd
+import send_sms
 
 
 config = {"user":'root', 
             "password":'Yoho1mes',
             "host":'127.0.0.1',
             "database":"cars"}
-dat1 = pd.read_csv("data/cars.csv")
+path="D:/BYUI/fall 2020/Side Projects/facebookmarketplace_scrape_project/data/cars.csv"
+dat1 = pd.read_csv(path)
 # dat1.fillna(None, inplace = True)
 dat1 = dat1.where(pd.notnull(dat1), None)
 columns_titles = ['title', 'year', 'miles', 'price', 'link', 'location']
@@ -44,10 +46,10 @@ def main():
     ################################ deleting duplicate rows sql
     # title, year, miles, price, link, location
     mysql_commands =    ["USE cars;",
-                        "CREATE TEMPORARY TABLE unique_cars (`id` INT NOT NULL AUTO_INCREMENT,  `title` VARCHAR(100) NULL,  `year` FLOAT(20) NULL,  `miles` FLOAT NULL,  `price` FLOAT(20) NULL,  `link` VARCHAR(100) NULL,  `location` VARCHAR(60) NULL,  PRIMARY KEY (`id`),  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);",
+                        "CREATE TEMPORARY TABLE unique_cars (`id` INT NOT NULL AUTO_INCREMENT, `title` VARCHAR(100) NULL, `year` FLOAT(20) NULL, `miles` FLOAT NULL, `price` FLOAT(20) NULL, `link` VARCHAR(100) NULL, `location` VARCHAR(60) NULL, PRIMARY KEY (`id`), UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE);",
                         "INSERT INTO unique_cars SELECT MIN(id),title,year, miles,price,link,location FROM cars GROUP BY title,year, miles,	price,link,location;",
                         "TRUNCATE cars;",
-                        "INSERT INTO cars SELECT id,title,year, miles,price,link,location FROM unique_cars;",
+                        "INSERT INTO cars SELECT id, title, year, miles, price, link, location FROM unique_cars;",
                         "DROP TABLE unique_cars;"]
     for command in mysql_commands:
         print(command)
@@ -60,28 +62,28 @@ def main():
     data = []
     for row in mycursor:
         data.append(row)
-    dat_epic_after = pd.DataFrame(data, columns = ['id','title','year','miles','price','link','location'])
-    print("Length before: ", len(dat_epic_before), "Length after: ", len(dat_epic_after))
-    print(dat_epic_before)
-    print()
-    print(dat_epic_after)
-
     mydb.close()
-    dat_deals = dat_epic_after.merge(dat_epic_before, on='id', how='left')
-    print(dat_deals)
-    ### testing
-    recipients = ["+17193385009"]
+    dat_epic_after = pd.DataFrame(data, columns = ['id','title','year','miles','price','link','location'])
+    
+    print("Length before: ", len(dat_epic_before), "Length after: ", len(dat_epic_after))
+    if len(dat_epic_after) > len(dat_epic_before):
+        print(dat_epic_before)
+        print()
+        print(dat_epic_after)
 
-    new_epic_data_found = True
-    if new_epic_data_found:
-        titles = list(dat['title'])
-        miles  = list(dat['miles'])
-        prices  = list(dat['price'])
-        links  = list(dat['link'])
-        body   = "\n\n" + str(len(dat.index)) + " New epic deal(s) ------pogs------\n"
+        dat_deals = dat_epic_after.merge(dat_epic_before, on='id', how='left').query('price_y.isna()')
+        print(dat_deals)
+        ### testing
+        recipients = ["+17193385009", "+17192002926"]
+
+        titles = list(dat_deals['title_x'])
+        miles  = list(dat_deals['miles_x'])
+        prices  = list(dat_deals['price_x'])
+        links  = list(dat_deals['link_x'])
+        body   = "\n\n" + str(len(dat_deals.index)) + " New epic deal(s) ------pogs------\n"
         for title, mile, price, link in zip(titles, miles, prices, links):
             # body += "\n\n\nTitle:   " + title + "Link: " + link + "\n\n\n"
-            body += "\nTitle:   " + title + "Price: $" + str(price) + "   Link:   " + link + "\n\n"
+            body += "\nTitle:   " + title + "   Price: $" + str(price) + "   Link:   " + link + "\n\n"
         for recipient in recipients:
             send_sms.main(recipient, body)
         print(body)

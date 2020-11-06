@@ -2,7 +2,6 @@
 try:
     import requests
     from bs4 import BeautifulSoup
-    import pprint
     from selenium import webdriver
     import time
     import random
@@ -17,7 +16,10 @@ except ImportError as ex:
 
 
 path = r'D:/Program Files/Chromedriver'
-url = "https://www.facebook.com/marketplace/coloradosprings/search/?query=cars%20trucks "
+url = "https://www.facebook.com/marketplace/coloradosprings/search/?query=cars%20trucks"
+driver = webdriver.Chrome(executable_path = path)
+driver.get(url)
+
 break_ = colored("---------------------------------------------------------------------", 'yellow')
 # %%
 username = "porterbmoody@gmail.com"
@@ -27,27 +29,40 @@ def fb_login():
     """ returns soup
     """
     print(colored("Connecting...", "green"))
+
+    # chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--window-size=1000x1000")
+    
     global driver
-    driver = webdriver.Chrome(executable_path = path)
-    driver.get(url)
+    
+    ## Headless Mode
 
-    time.sleep(random.randint(200,300)/100)
+    time.sleep(random.randint(200,350)/100)
+
+    class_name="oajrlxb2 s1i5eluu gcieejh5 bn081pho humdl8nn izx4hr6d rq0escxv nhd2j8a9 j83agx80 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys d1544ag0 qt6c0cv9 tw6a2znq i1ao9s8h esuyzwwr f1sip0of lzcic4wl l9j0dhe7 abiwlrkh p8dawk7l beltcj47 p86d2i9g aot14ch1 kzx2olss cbu4d94t taijpn5t ni8dbmo4 stjgntxs k4urcfbm tv7at329"
+
+    try:
+        driver.find_element_by_class_name(class_name).click()
+    except:
+        print("No Click.")
+
+    time.sleep(random.randint(150,350)/100)
+    print(break_)
+    print(colored("Scrolling...", 'yellow'))
+    scroll_down()
+    time.sleep(random.randint(150,350)/100)
+    
+    print(break_)
+    print(colored("Scrolling...", 'yellow'))
+    scroll_down()
+    time.sleep(random.randint(150,350)/100)
 
     print(break_)
     print(colored("Scrolling...", 'yellow'))
     scroll_down()
-    time.sleep(random.randint(200,300)/100)
+    time.sleep(random.randint(150,300)/100)
 
-    print(break_)
-    print(colored("Scrolling...", 'yellow'))
-    scroll_down()
-    time.sleep(random.randint(200,300)/100)
-
-    print(break_)
-    print(colored("Scrolling...", 'yellow'))
-    scroll_down()
-    time.sleep(random.randint(200,300)/100)
-
+    driver.minimize_window()
     
     return BeautifulSoup(driver.page_source, 'html.parser')
 
@@ -82,7 +97,7 @@ def scrape_soup(soup):
         if len(row) == 4:
             link = "https://www.facebook.com" + mile.attrs['href']
             links.append(link)
-            print(link, sep = "\n")
+            # print(link, sep = "\n")
             for m in row:
 
                 if  line_number % 4 == 0:
@@ -94,7 +109,7 @@ def scrape_soup(soup):
                 elif line_number % 4 == 1:
                     # print(re.findall('^\d{4}', m.text))
                     titles.append(m.text)
-                    print(m.text)
+                    # print(m.text)
                     try:
                         years.append(int(re.findall('^\d{4}', m.text)[0]))
                     except:
@@ -126,12 +141,12 @@ def scrape_soup(soup):
         miles = lambda x: x['miles'].str.extract("(\d+)").astype("Float32")*1000
         ))
 
-    
-    dat.to_csv("data/cars.csv", index = False)
+    path="D:/BYUI/fall 2020/Side Projects/facebookmarketplace_scrape_project/data/cars.csv"
+    dat.to_csv(path, index = False)
 
 def keep_open():
     input("Press Enter to close")
-
+    # time.sleep(5)
 
 def scroll_down():
     SCROLL_PAUSE_TIME = 0.5
@@ -162,7 +177,7 @@ def main():
     #     scrape_soup(soup)
 
     scrape_soup(fb_login())
-    keep_open()
+    # keep_open()
     driver.close()
 
 if __name__ == "__main__":
