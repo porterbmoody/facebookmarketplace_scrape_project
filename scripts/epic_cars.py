@@ -17,8 +17,6 @@ except ImportError as ex:
 
 path = r'D:/Program Files/Chromedriver'
 url = "https://www.facebook.com/marketplace/coloradosprings/search/?query=cars%20trucks"
-driver = webdriver.Chrome(executable_path = path)
-driver.get(url)
 
 break_ = colored("---------------------------------------------------------------------", 'yellow')
 # %%
@@ -34,6 +32,8 @@ def fb_login():
     # chrome_options.add_argument("--window-size=1000x1000")
     
     global driver
+    driver = webdriver.Chrome(executable_path = path)
+    driver.get(url)
     
     ## Headless Mode
 
