@@ -1,22 +1,22 @@
 #%%
-try:
-    import requests
-    from bs4 import BeautifulSoup
-    from selenium import webdriver
-    import time
-    import random
-    import pandas as pd
-    import re
-    from selenium.webdriver.chrome.options import Options
-    import numpy as np
-    from termcolor import colored
-    import connect_to_mysql
-except ImportError as ex:
-    print(ex)
+import requests
+from bs4 import BeautifulSoup
+from selenium import webdriver
+import time
+import random
+import pandas as pd
+import re
+from selenium.webdriver.chrome.options import Options
+import numpy as np
+from termcolor import colored
+import connect_to_mysql
+from datetime import datetime
 
+# pd.set_option("display.max_rows", 120)
+# pd.set_option('display.max_colwidth', -1)
 
-path = r'D:/Program Files/Chromedriver'
-url = "https://www.facebook.com/marketplace/coloradosprings/search/?query=cars%20trucks"
+path = r'D:/Program Files/chromedriver'
+url = "https://www.facebook.com/marketplace/coloradosprings/search/?query=cars%20and%20trucks"
 
 break_ = colored("---------------------------------------------------------------------", 'yellow')
 # %%
@@ -30,7 +30,7 @@ def fb_login():
 
     # chrome_options.add_argument("--headless")
     # chrome_options.add_argument("--window-size=1000x1000")
-    
+    ## where the magic happens
     global driver
     driver = webdriver.Chrome(executable_path = path)
     driver.get(url)
@@ -38,14 +38,12 @@ def fb_login():
     ## Headless Mode
 
     time.sleep(random.randint(200,350)/100)
-
-    class_name="oajrlxb2 s1i5eluu gcieejh5 bn081pho humdl8nn izx4hr6d rq0escxv nhd2j8a9 j83agx80 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x jb3vyjys d1544ag0 qt6c0cv9 tw6a2znq i1ao9s8h esuyzwwr f1sip0of lzcic4wl l9j0dhe7 abiwlrkh p8dawk7l beltcj47 p86d2i9g aot14ch1 kzx2olss cbu4d94t taijpn5t ni8dbmo4 stjgntxs k4urcfbm tv7at329"
-
+ 
     try:
         driver.find_element_by_class_name(class_name).click()
     except:
         print("No Click.")
-
+    ################## scrolling randomly
     time.sleep(random.randint(150,350)/100)
     print(break_)
     print(colored("Scrolling...", 'yellow'))
@@ -90,7 +88,7 @@ def scrape_soup(soup):
     years             = []
     links             = []
     # results_mile = soup.find_all('div', {"class" : "rq0escxv j83agx80 cbu4d94t i1fnvgqd muag1w35 pybr56ya f10w8fjw k4urcfbm c7r68pdi suyy3zvx"})
-
+    
     line_number = 0
     
     for mile in result_link:
@@ -107,7 +105,6 @@ def scrape_soup(soup):
 
                 if  line_number % 4 == 0:
 
-                    
                     prices.append(m.find(class_ = "hlyrhctz").text)
                     
                 elif line_number % 4 == 1:
@@ -139,11 +136,11 @@ def scrape_soup(soup):
             "price"    : prices,
             "location" : locations,
             "link"     : links
-        }).query('price != "Sold" and price != "Pending"').assign(
-        year  = lambda x: x['title'].str.extract(r'^(\d{4})').astype("Float32"),
-        price = lambda x: x['price'].str.replace("$", "").str.replace(",", "").astype("Float32"),
-        miles = lambda x: x['miles'].str.extract("(\d+)").astype("Float32")*1000
-        ))
+            }).query('price != "Sold" and price != "Pending"').assign(
+            year  = lambda x: x['title'].str.extract(r'^(\d{4})').astype("Float32"),
+            price = lambda x: x['price'].str.replace("$", "").str.replace(",", "").astype("Float32"),
+            miles = lambda x: x['miles'].str.extract("(\d+)").astype("Float32")*1000
+            ))
 
     path="D:/BYUI/fall 2020/Side Projects/facebookmarketplace_scrape_project/data/cars.csv"
     dat.to_csv(path, index = False)
@@ -175,9 +172,22 @@ def scroll_down():
 
 def main():
     
-    scrape_soup(fb_login())
+    scrape_soup(soup = fb_login())
+
     # keep_open()
     driver.close()
-
+    driver.quit()
 if __name__ == "__main__":
+    
+    wait_time = random.randint(2000*60, 3000*60)/99
+    print('Waiting:', round(wait_time/60, 2), "mins to run again.")
+    # time.sleep(wait_time)
     main()
+    # Count number of epic rows, execute the query and assign it to a pandas dataframe, detect if new epic rows were added
+    connect_to_mysql.main()
+    # now = datetime.now()
+
+    # dt_string = now.strftime("%H:%M:%S")
+    # print("Running again at:", dt_string + round(wait_time, 0))
+
+

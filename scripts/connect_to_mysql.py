@@ -8,9 +8,8 @@ config = {"user":'root',
             "password":'Yoho1mes',
             "host":'127.0.0.1',
             "database":"cars"}
-path="D:/BYUI/fall 2020/Side Projects/facebookmarketplace_scrape_project/data/cars.csv"
+path = "D:/BYUI/fall 2020/Side Projects/facebookmarketplace_scrape_project/data/cars.csv"
 dat1 = pd.read_csv(path)
-# dat1.fillna(None, inplace = True)
 dat1 = dat1.where(pd.notnull(dat1), None)
 columns_titles = ['title', 'year', 'miles', 'price', 'link', 'location']
 dat = dat1.reindex(columns=columns_titles)
@@ -24,6 +23,7 @@ def main():
 
     cols = "`,`".join([str(i) for i in dat.columns.tolist()])
     print(cols)
+    
 
     ### query epic data 
     query = "SELECT * FROM cars WHERE year >= 2008 AND miles <= 150000 AND price <= 4500;"
@@ -36,8 +36,6 @@ def main():
     ##### insert new data
     for i, row in dat.iterrows():
         insert_statement = "INSERT INTO `cars` (`id`,`" + cols + "`) VALUES (DEFAULT," + "%s," * (len(row)-1) + "%s)"
-        # statement_insert = "INSERT INTO `cars` (`" + cols + "`) VALUES (" + "%s," * (len(row)-1) + "%s)"
-        # print(insert_statement, tuple(row))
         mycursor.execute(insert_statement, tuple(row))
         mydb.commit()
 
